@@ -1,0 +1,219 @@
+/* OrderForm.css */
+
+.order-form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .order-form-container h2 {
+    margin-top: 0;
+    color: #1a1a1a;
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .order-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Form Groups */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #4CAF50;
+  }
+  
+  .form-group small {
+    color: #666;
+    font-size: 12px;
+  }
+  
+  /* Radio Groups */
+  .radio-group {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .radio-label {
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+  }
+  
+  .radio-text {
+    display: block;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .radio-label input[type="radio"]:checked + .radio-text {
+    border-color: #4CAF50;
+    background-color: #f1f8f4;
+  }
+  
+  /* Side-specific colors */
+  .radio-text.yes {
+    color: #2e7d32;
+  }
+  
+  .radio-label input[type="radio"]:checked + .radio-text.yes {
+    background-color: #e8f5e9;
+    border-color: #2e7d32;
+  }
+  
+  .radio-text.no {
+    color: #c62828;
+  }
+  
+  .radio-label input[type="radio"]:checked + .radio-text.no {
+    background-color: #ffebee;
+    border-color: #c62828;
+  }
+  
+  /* Order type colors */
+  .radio-text.buy {
+    color: #1976d2;
+  }
+  
+  .radio-label input[type="radio"]:checked + .radio-text.buy {
+    background-color: #e3f2fd;
+    border-color: #1976d2;
+  }
+  
+  .radio-text.sell {
+    color: #d32f2f;
+  }
+  
+  .radio-label input[type="radio"]:checked + .radio-text.sell {
+    background-color: #ffebee;
+    border-color: #d32f2f;
+  }
+  
+  /* Price Info */
+  .price-info {
+    display: block;
+    margin-top: 4px;
+    color: #1976d2;
+    font-weight: 500;
+  }
+  
+  /* Order Summary */
+  .order-summary {
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 4px;
+    border-left: 4px solid #4CAF50;
+  }
+  
+  .order-summary h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .order-summary p {
+    margin: 8px 0;
+    color: #555;
+  }
+  
+  .total-cost {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  
+  /* Messages */
+  .message {
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  
+  .message-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+  }
+  
+  .message-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+  }
+  
+  .message-info {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+  }
+  
+  /* Submit Button */
+  .submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+  .submit-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .order-form-container {
+      padding: 16px;
+    }
+    
+    .radio-group {
+      flex-direction: column;
+    }
+  }
