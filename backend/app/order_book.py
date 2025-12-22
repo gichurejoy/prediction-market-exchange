@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import List, Optional
 import heapq
 from datetime import datetime
+import itertools
 from .models import Order, Side, OrderType
 
 class OrderBook:
@@ -25,16 +26,19 @@ class OrderBook:
         
         # For BUY orders: We want HIGHEST price first
         # Python heapq is min-heap, so we negate prices for max-heap behavior
-        self.yes_bids: List[tuple] = []  # [(negative_price, timestamp, order), ...]
+        self.yes_bids: List[tuple] = []  # [(negative_price, timestamp, counter, order), ...]
         self.no_bids: List[tuple] = []
         
         # For SELL orders: We want LOWEST price first
         # Min-heap works naturally here
-        self.yes_asks: List[tuple] = []  # [(price, timestamp, order), ...]
+        self.yes_asks: List[tuple] = []  # [(price, timestamp, counter, order), ...]
         self.no_asks: List[tuple] = []
         
         # Quick lookup by order ID
         self.orders_by_id: dict[str, Order] = {}
+        
+        # Counter to break ties (ensures uniqueness in heap)
+        self.counter = itertools.count()
     
     def add_order(self, order: Order) -> None:
         """
@@ -47,22 +51,23 @@ class OrderBook:
         # Store in lookup dict
         self.orders_by_id[order.id] = order
         
-        # Create heap entry: (priority, timestamp, order)
-        # Timestamp ensures FIFO for same price (price-time priority)
+        # Create heap entry: (priority, timestamp, counter, order)
+        # Counter ensures unique ordering when price and timestamp are equal
         timestamp = order.timestamp.timestamp()
+        count = next(self.counter)
         
         if order.side == Side.YES:
             if order.order_type == OrderType.BUY:
                 # Negate price for max-heap behavior (highest price first)
-                heapq.heappush(self.yes_bids, (-order.price, timestamp, order))
+                heapq.heappush(self.yes_bids, (-order.price, timestamp, count, order))
             else:  # SELL
                 # Normal min-heap (lowest price first)
-                heapq.heappush(self.yes_asks, (order.price, timestamp, order))
+                heapq.heappush(self.yes_asks, (order.price, timestamp, count, order))
         else:  # NO
             if order.order_type == OrderType.BUY:
-                heapq.heappush(self.no_bids, (-order.price, timestamp, order))
+                heapq.heappush(self.no_bids, (-order.price, timestamp, count, order))
             else:  # SELL
-                heapq.heappush(self.no_asks, (order.price, timestamp, order))
+                heapq.heappush(self.no_asks, (order.price, timestamp, count, order))
     
     def get_best_bid(self, side: Side) -> Optional[Order]:
         """
@@ -74,10 +79,10 @@ class OrderBook:
         heap = self.yes_bids if side == Side.YES else self.no_bids
         
         # Clean up filled orders from top of heap
-        while heap and heap[0][2].remaining_quantity == 0:
+        while heap and heap[0][3].remaining_quantity == 0:
             heapq.heappop(heap)
         
-        return heap[0][2] if heap else None
+        return heap[0][3] if heap else None
     
     def get_best_ask(self, side: Side) -> Optional[Order]:
         """
@@ -89,10 +94,10 @@ class OrderBook:
         heap = self.yes_asks if side == Side.YES else self.no_asks
         
         # Clean up filled orders
-        while heap and heap[0][2].remaining_quantity == 0:
+        while heap and heap[0][3].remaining_quantity == 0:
             heapq.heappop(heap)
         
-        return heap[0][2] if heap else None
+        return heap[0][3] if heap else None
     
     def remove_order(self, order_id: str) -> Optional[Order]:
         """
@@ -119,6 +124,7 @@ class OrderBook:
             heap = self.no_bids if order_type == OrderType.BUY else self.no_asks
         
         # Filter out filled orders and convert to dict
+        # Note: heap entries are now (price, timestamp, counter, order)
         active_orders = [
             {
                 'id': order.id,
@@ -126,7 +132,7 @@ class OrderBook:
                 'quantity': order.remaining_quantity,
                 'user_id': order.user_id
             }
-            for _, _, order in heap
+            for _, _, _, order in heap
             if order.remaining_quantity > 0
         ]
         
