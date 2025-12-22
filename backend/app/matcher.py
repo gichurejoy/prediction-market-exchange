@@ -11,7 +11,6 @@ class MatchingEngine:
     3. Executing trades
     4. Updating order states
     
-    Think of it as a referee in a marketplace.
     """
     
     def __init__(self):
@@ -195,9 +194,6 @@ class MatchingEngine:
         # - Buying YES at 60¢ means believing event has 60% chance
         # - NO should be 40¢ (100 - 60)
         # This validation ensures market consistency
-        
-        # In a real system, you'd track this more carefully
-        # For this demo, we're simplifying
         pass
     
     def get_order_book_state(self) -> dict:
