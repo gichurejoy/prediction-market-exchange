@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Literal, Optional
-from datetime import datetime
+from datetime import datetime, UTC
 from enum import Enum
 import uuid
 
@@ -39,16 +39,16 @@ class Order(BaseModel):
     quantity: int  # Number of shares
     filled_quantity: int = 0  # How many shares have been filled
     status: OrderStatus = OrderStatus.PENDING
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-    
-    @validator('price')
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    @field_validator('price')
     def validate_price(cls, v):
         """Price must be between 0 and 100 cents"""
         if not 0 <= v <= 100:
             raise ValueError('Price must be between 0 and 100 cents')
         return v
     
-    @validator('quantity')
+    @field_validator('quantity')
     def validate_quantity(cls, v):
         """Minimum order size is 1 share"""
         if v < 1:
@@ -80,7 +80,7 @@ class Trade(BaseModel):
     side: Side  # YES or NO
     price: int  # Price at which trade executed
     quantity: int  # Number of shares traded
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 class OrderRequest(BaseModel):
     """
